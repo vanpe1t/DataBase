@@ -6,6 +6,7 @@ create table employee (
     gender VARCHAR(6) NOT NULL ,
     age INT NOT NULL
 );
+
 INSERT INTO employee (last_name, first_name, gender, age)
 VALUES ('Makarov', 'Maxim', 'male', 43);
 INSERT INTO employee (last_name, first_name, gender, age)
@@ -52,6 +53,7 @@ SELECT
     *
 FROM employee
 WHERE char_length(first_name) > 4;
+
 --Task2
 --2.1
 UPDATE employee SET first_name = 'Ivan' WHERE first_name = 'Maxim';
@@ -78,6 +80,77 @@ FROM employee
 GROUP BY
     first_name HAVING COUNT(1) > 1
 ORDER BY
-    Максимальный_возраст
+    Максимальный_возраст;
+
+--Task3
+--TRUNCATE TABLE employee;
+SELECT * FROM employee;
+create table city (
+                      city_id BIGSERIAL NOT NULL PRIMARY KEY,
+                      city_name VARCHAR(50) NOT NULL
+);
+SELECT * FROM city;
+--DELETE FROM city WHERE city_id = 6
+INSERT INTO city (city_name) VALUES ('Moscow');
+INSERT INTO city (city_name) VALUES ('Peter');
+INSERT INTO city (city_name) VALUES ('Ekati');
+
+TRUNCATE TABLE employee;
+
+ALTER TABLE employee ADD COLUMN city_id BIGSERIAL REFERENCES city(city_id);
+ALTER TABLE employee ALTER COLUMN city_id DROP NOT NULL ;
+ALTER TABLE employee ALTER COLUMN city_id DROP DEFAULT;
+
+INSERT INTO employee (last_name, first_name, gender, age, city_id)
+VALUES ('Petrova', 'Kate', 'female', 33, 1);
+INSERT INTO employee (last_name, first_name, gender, age, city_id)
+VALUES ('Pupkin', 'Vasisliy', 'male', 40, 2);
+INSERT INTO employee (last_name, first_name, gender, age, city_id)
+VALUES ('Vinogradov', 'Alex', 'male', 60, 3);
+INSERT INTO employee (last_name, first_name, gender, age, city_id)
+VALUES ('Pupkin', 'Vasisliy', 'male', 40, 1);
+INSERT INTO employee (last_name, first_name, gender, age, city_id)
+VALUES ('Vinogradov', 'Alex', 'male', 60, 2);
+SELECT * FROM employee;
 
 
+INSERT INTO city (city_name) VALUES ('Samara');
+INSERT INTO employee (last_name, first_name, gender, age)
+VALUES ('Sidorova', 'Sidora', 'female', 44);
+
+SELECT
+    employee.first_name AS Имя,
+    employee.last_name AS Фамилия,
+    city.city_name AS Город
+FROM employee AS employee
+LEFT JOIN city as city
+    ON city.city_id = employee.city_id;
+
+
+INSERT INTO employee (last_name, first_name, gender, age)
+VALUES ('Sidorovich', 'Pomidora', 'female', 45);
+
+SELECT
+    city_name AS Город,
+    employee.first_name AS Имя,
+    last_name AS Фамилия
+FROM city
+LEFT JOIN employee
+    ON city.city_id = employee.city_id;
+
+SELECT
+    city_name AS Город,
+    employee.first_name AS Имя,
+    last_name AS Фамилия,
+    city.city_id
+FROM city
+       full join  employee
+                   ON city.city_id = employee.city_id;
+
+SELECT
+    employee.first_name AS Имя,
+    employee.last_name AS Фамилия,
+    city.city_name AS Город
+FROM employee AS employee
+         INNER JOIN city as city
+                    ON city.city_id = employee.city_id;
